@@ -32,7 +32,6 @@
 			</div>
 
 			<div class="linkdiv">
-				<a class="navlink" href="/">Home</a>
 				<a class="navlink new-todo" href="/todo" type="button"><%= link %></a>
 			</div>
 		</div>
@@ -41,10 +40,7 @@
 				<span class="list-type"><%= title %></span>
 				List
 			</h2>
-			<ul>
-				<% if (locals.json) { %> <% for( let x of json ) { %> <% if (x.list == title) { %>
-				<li class="todo"><h3><%= x.todo %></h3></li>
-				<% } %> <% } %> <% } %>
+			<ul id="todo-list">
 				<li class="add">
 					<div class="add-div">
 						<svg
@@ -63,6 +59,9 @@
 						<h3>Add New TODO</h3>
 					</div>
 				</li>
+				<% if (locals.json) { %> <% for( let x of json ) { %> <% if (x.list == title) { %>
+				<li class="todo"><h3><%= x.todo %></h3></li>
+				<% } %> <% } %> <% } %>
 			</ul>
 		</div>
 		<script>
@@ -91,28 +90,41 @@
 				});
 			});
 
-			addButton.addEventListener("click", () => {
+			addButton.addEventListener("click", async () => {
 				let new_todo = prompt("What do you want to add to your list?");
+				let list_type = listType.innerHTML;
+				console.log(list_type);
 				let userData = {
 					todo: new_todo,
-					list: listType.innerHTML,
+					list: list_type,
 				};
-				fetch("/append", {
+
+				let res = await fetch("/append", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify(userData),
-				}).then((response) => {
-					if (!response.ok) {
-						throw new Error("POST request failed");
-					}
-					// The POST request was successful, now make the GET request
-					return fetch("/todo", {
-						method: "GET",
-					});
+				});
+
+				let updated_data = await res.json();
+
+				// Add the new todo to the todo list
+				const todo_list = document.getElementById("todo-list");
+				let todo = document.createElement("li");
+				todo.className = "todo";
+
+				const todoH3 = document.createElement("h3");
+				todoH3.innerText = updated_data;
+
+				todo.appendChild(todoH3);
+				todo_list.appendChild(todo);
+
+				todo.addEventListener("click", () => {
+					todo.classList.toggle("strike-through");
 				});
 			});
+
 			for (let x of todo) {
 				x.addEventListener("click", () => {
 					x.classList.toggle("strike-through");
