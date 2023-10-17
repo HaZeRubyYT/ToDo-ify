@@ -25,15 +25,15 @@ app.post("/process1", (req, res) => {
 	// console.log(buttonText + '  1');
 	res.redirect("/todo");
 });
+
 app.post("/process2", (req, res) => {
 	sharedData.Text = req.body.anchorText;
 	// console.log(sharedData.Text + "  1");
 	res.redirect("/todo");
 });
-app.post("/append", (req, res) => {
+
+app.post("/append", async (req, res) => {
 	// Read the JSON file
-	listType = req.body.list;
-	let new_todo = req.body.todo;
 	// console.log(listType);
 	// console.log(new_todo);
 	fs.readFile(`${__dirname}/data.json`, "utf8", (err, data) => {
@@ -45,13 +45,14 @@ app.post("/append", (req, res) => {
 		// Parse the JSON data into a JavaScript array
 		let jsonData = JSON.parse(data);
 		// console.log(jsonData);
+		console.log(req.body);
 		let todoDetail = {
-			todo: new_todo,
-			list: listType,
+			todo: req.body.todo,
+			list: req.body.list,
 		};
 		let ting = todoDetail.todo;
 		// Append the new string to the array
-		if (ting.length !== 0) {
+		if (ting.length !== 0 && ting !== null) {
 			jsonData.todo.push(todoDetail);
 			let updatedJSON = JSON.stringify(jsonData);
 
@@ -65,8 +66,11 @@ app.post("/append", (req, res) => {
 				console.log("Data appended to the JSON file.");
 			});
 		}
-		res.redirect("/refresh");
+		// res.redirect("/refresh");
+		console.log("ooongaaa bonnnga !!!ijwsdi9fj aiopsdjfiopas djfoadsj");
 	});
+
+	res.json(req.body.todo);
 });
 
 app.get("/refresh", (req, res) => {
@@ -94,7 +98,11 @@ app.get("/todo", (req, res) => {
 	todoJSON = JSON.parse(data).todo;
 	// console.log(todoJSON);
 
-	res.render("todo.ejs", { title: textData.title, link: textData.link, json: todoJSON });
+	res.render("todo.ejs", {
+		title: textData.title,
+		link: textData.link,
+		json: todoJSON,
+	});
 });
 
 app.listen(port, () => {
