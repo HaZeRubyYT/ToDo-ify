@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<!-- Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap"
+			rel="stylesheet"
+		/>
+
+		<!-- Stylesheet -->
+		<link rel="stylesheet" href="/styles/styles.css" />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/x-icon" href="/images/favicon.png" />
+
+		<title>To-Do List</title>
+	</head>
+	<body class="home-body">
+		<div class="title-div"><h1 class="hovered-text">To-Do List</h1></div>
+		<div class="btn-div">
+			<a href="/todo"><button class="hovered-box btn personal">Personal</button></a>
+			<a href="/todo"><button class="hovered-box btn work">Work</button></a>
+		</div>
+		<script>
+			// Get the button element by its ID
+			const button = document.body.querySelectorAll(".btn");
+			// console.log(button)
+			// Add a click event listener to the button
+			for (let x of button) {
+				//console.log(x.innerHTML);
+				x.addEventListener("click", function () {
+					// Retrieve the inner HTML of the button
+					const buttonText = this.innerHTML;
+
+					// Send the inner HTML to the Express app using fetch
+					fetch("/process1", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ buttonText }),
+					});
+				});
+			}
+		</script>
+	</body>
+</html>

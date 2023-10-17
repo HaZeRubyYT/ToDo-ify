@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<!-- Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap"
+			rel="stylesheet"
+		/>
+
+		<!-- Stylesheet -->
+		<link rel="stylesheet" href="/styles/styles.css" />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/x-icon" href="/images/favicon.png" />
+
+		<title>To-Do List</title>
+	</head>
+	<body class="todo-body">
+		<div class="navbar">
+			<div class="nav-icon">
+				<a href="/">
+					<img
+						class="nav-img"
+						src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAADHElEQVR4nO2aO2gVQRSGrw9MBJUoMT7BB1jY2KgIgpVBERUlRUxUtLORkGBjY2FhEx9gRCIWImgnKBgjPhoLQaIIgkISYyw0PlCSCIqYh+aTI+fCssy92Z2d3VmCH6TJnZk9/845M+fMbKHwnykKMB/YC5wB7gK9wDAwqn+D+r9O4LS2nVfIA0AFcAB4APwmPuPad5+MVfAgYDZwDPiIO2SspswEATuAftLjLVCbpoBKoJ1smNBnuZ0dYBHwnOx5Aix2JWIl8AZ/vAaWu5gJnyKKXE0aEz7cKUyP7FFq0zQbIZfwzyCwRu2pk43UZon1zQiwRe3ZAPzUTXdTnN1aAsw3h9SepcBAyNUqowiRHds3p9SWOcALw+8tUWbDZdphww0JamA6cLtEm09lN0tNAH3yVPI4teXcJG0bywmRTNQX74q7OHAkQvuH5eoJm1TcBd+BdWpHLTAWoY+0qTIJkULHB/LydqoNa4FvMfrWmYScxQ/N+vxqi/Kg1SREStCsaQ+slo8t+t8zCekjW2RhmalL7TXLMXpNQoYsfLseuGJhQHcxUIET2DNsEiInHXG4qf3kjV6I0e8LsEr71ms1aMuoCyHCRdmBtf/xCO1/AZu1/XpNBJMw4sK1ilwXX9cxjgJ/SrSTN39Q2y0DPpCcryYhSTLeW8XcBzis51VhTurvc4GXuKHHJEROB5PwSIzUsXarG4UTwRlAB+7oMAmRo86kdAELdLytwA89CflXPwBtuKXVJGSPo8FfAUt0zI1ATSB+XLPLJKTKYdIop4WrA2NvLxE3SRgreQgO3Hf4oM+S0VokglHpNIpQIftxy5DWGWnQUE5IhaP1PW0GgFklhaiYFvJPU1kRgVmRm6W80hf5lF5XmTwyEfvuRBPCvHE+loiAiz0jP3RNGuBlxFTnJF765YrDSkTooifrMjiIZOUrEokIiKnx5GZdwEInIkIx05awNI3D5VSvqoFtKbtab6rX04bZaQ7dWyTlfaYfDBgENWp1aZOmj+vBYIP10uoaqQ20xJUPZu7ozdJg6KOabi11W6UoKpbG/5mK/AVoriA3uppgSQAAAABJRU5ErkJggg=="
+					/>
+				</a>
+			</div>
+
+			<div class="linkdiv">
+				<a class="navlink" href="/">Home</a>
+				<a class="navlink new-todo" href="/todo" type="button"><%= link %></a>
+			</div>
+		</div>
+		<div class="todo-if">
+			<h2 class="todo-title">
+				<span class="list-type"><%= title %></span>
+				List
+			</h2>
+			<ul>
+				<% if (locals.json) { %> <% for( let x of json ) { %> <% if (x.list == title) { %>
+				<li class="todo"><h3><%= x.todo %></h3></li>
+				<% } %> <% } %> <% } %>
+				<li class="add">
+					<div class="add-div">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							x="0px"
+							y="0px"
+							width="35"
+							height="35"
+							viewBox="0 0 50 50"
+							style="fill: #ffffff"
+						>
+							<path
+								d="M25,2C12.317,2,2,12.317,2,25s10.317,23,23,23s23-10.317,23-23S37.683,2,25,2z M37,26H26v11h-2V26H13v-2h11V13h2v11h11V26z"
+							></path>
+						</svg>
+						<h3>Add New TODO</h3>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<script>
+			// Get the button element by its ID
+			const anchorButton = document.body.querySelector(".new-todo");
+			const addButton = document.querySelector(".add-div");
+			const listType = document.querySelector(".list-type");
+			const todo = document.querySelectorAll(".todo");
+			// console.log(button)
+			// Add a click event listener to the button
+
+			// console.log(x.innerHTML);
+			anchorButton.addEventListener("click", function (e) {
+				e.preventDefault(); // Prevent the anchor's default behavior (navigation)
+
+				// Retrieve the inner HTML of the button
+				const anchorText = this.innerHTML;
+
+				// Send the inner HTML to the Express app using fetch
+				fetch("/process2", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ anchorText }),
+				});
+			});
+
+			addButton.addEventListener("click", () => {
+				let new_todo = prompt("What do you want to add to your list?");
+				let userData = {
+					todo: new_todo,
+					list: listType.innerHTML,
+				};
+				fetch("/append", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(userData),
+				}).then((response) => {
+					if (!response.ok) {
+						throw new Error("POST request failed");
+					}
+					// The POST request was successful, now make the GET request
+					return fetch("/todo", {
+						method: "GET",
+					});
+				});
+			});
+			for (let x of todo) {
+				x.addEventListener("click", () => {
+					x.classList.toggle("strike-through");
+				});
+			}
+		</script>
+	</body>
+</html>
